@@ -10,7 +10,7 @@
       <div class="text-input text-input--focus">
         <input v-model='todoText' class="input" />
       </div>
-      <button class="button button--filled">Add task</button>
+      <button :disabled='!todoText' class="button button--filled">Add task</button>
     </form>
   </section>
 </template>

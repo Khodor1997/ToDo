@@ -1,25 +1,27 @@
 <template>
   <AppHeader />
-  <AppFilters />
+  <AppFilters :active-filter="activeFilter" @set-filter="setFilter"/>
 
   <main class="app-main">
-    <AppTodoList :todo-list="todoList" @toggle-todo="toggleTodo" @delete-todo="deleteTodo" />
+    <AppTodoList :todo-list="filteredTodos" @toggle-todo="toggleTodo" @delete-todo="deleteTodo" />
     <AppAddTodo @add-todo="addTodo" />
   </main>
-  <AppFooter />
+  <AppFooter :stats="stats" />
 </template>
 
 <script lang="ts">
 import { defineComponent } from "vue";
 import AppAddTodo from "./components/AppAddTodo.vue";
 import AppFilters from "./components/AppFilters.vue";
-import AppFooter from "./components/AppFooter.vue";
+import AppFooter, { Stats } from "./components/AppFooter.vue";
 import AppHeader from "./components/AppHeader.vue";
 import AppTodoList from "./components/AppTodoList.vue";
 import { Todo } from "./types/Todo";
+import { Filter } from "@/types/Filter";
 
 interface State {
     todoList: Todo[]
+    activeFilter: Filter
 }
 
 export default defineComponent({
@@ -38,7 +40,34 @@ export default defineComponent({
         { id: 1, text: "Second task", complited: false },
         { id: 2, text: "Lorem fsdf sdf ", complited: true },
       ],
+      activeFilter: 'All'
     };
+  },
+  computed: {
+    filteredTodos(): Todo[] {
+      switch (this.activeFilter) {
+        case 'Active':
+          return this.activeTodos
+        case 'Done':
+          return this.complitedTodos
+        case 'All':
+        default:
+          return this.todoList
+
+      }
+    },
+    stats(): Stats {
+      return {
+        active: this.activeTodos.length,
+        done: this.complitedTodos.length
+      }
+    },
+    activeTodos(): Todo[] {
+      return this.todoList.filter(todo => !todo.complited)
+    },
+    complitedTodos(): Todo[] {
+      return this.todoList.filter(todo => todo.complited)
+    }
   },
   methods: {
     addTodo(todo: Todo) {
@@ -54,6 +83,9 @@ export default defineComponent({
     deleteTodo(id: number) {
       this.todoList = this.todoList.filter((todo) => todo.id !== id);
     },
+    setFilter(filter: Filter) {
+      this.activeFilter = filter
+    }
   },
 });
 </script>

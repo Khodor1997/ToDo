@@ -135,6 +135,7 @@ button {
 
 .toggle-group .button {
   font-size: 1.6rem;
+  cursor: pointer;
 }
 
 .toggle-group .button:not(.button--primary):hover {
